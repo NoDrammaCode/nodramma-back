@@ -1,0 +1,79 @@
+[tool.poetry]
+name = "no-dramma"
+version = "0.1.0"
+description = "Service for psychological support"
+authors = ["alexandrmaltsev2012@gmail.com"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+ruff = "^0.8.4"
+pyright = "^1.1.391"
+poethepoet = "^0.32.0"
+pre-commit = "^4.0.1"
+psycopg = "^3.2.6"
+fastapi = "^0.115.11"
+pydantic = "^2.10.6"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.39"}
+alembic = "^1.15.1"
+pydantic-settings = "^2.8.1"
+
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+exclude = ["typings"]
+
+[tool.ruff.lint]
+# On top of the defaults, enable flake8-bugbear (`B`), flake8-quotes (`Q`) and isort (`I`).
+select = ["E4", "E7", "E9", "F", "B", "Q", "I"]
+# Avoid auto-fix flake8-bugbear violations because some of them may be unsafe.
+unfixable = ["B"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends", "fastapi.Query", "fastapi.params.Query"]
+
+# Ignore `E402` (import violations) in all `__init__.py` files, and in tests subdirectory (other subdirs may be added).
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests}/*" = ["E402"]
+"**/alembic/env.py" = ["F403"]
+
+[tool.ruff.format]
+# Use double quotes in format.
+quote-style = "double"
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
+include = ["src"]
+reportMissingImports = true
+reportUnknownVariableType = false
+reportUntypedBaseClass = false
+disableOrganizeImports = true
+typeCheckingMode = "strict"
+stubPath = "typings"
+exclude = ["**/alembic/versions/**"]
+
+[tool.poe.executor]
+type = "simple"
+
+[tool.poe.tasks.format]
+shell = "ruff check --fix && ruff format"
+
+[tool.poe.tasks.db-revision]
+help = "Create a new database revision"
+args = [{name = "m", help = "Migration message"}]
+cwd = "src"
+cmd = "alembic revision --autogenerate -m \"$m\""
+
+[tool.poe.tasks.db-upgrade]
+help = "Upgrade database to the latest revision"
+cwd = "src"
+cmd = "alembic upgrade head"
+
+[tool.poe.tasks.db-downgrade]
+help = "Downgrade database by one revision"
+cwd = "src"
+cmd = "alembic downgrade -1"
