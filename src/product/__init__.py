@@ -1,0 +1,3 @@
+"""
+Product package initialization.
+"""
