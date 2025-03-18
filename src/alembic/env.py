@@ -21,6 +21,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 from app.db.pg_client import Base  # noqa
+from product.models import *  # noqa
 
 target_metadata = Base.metadata
 

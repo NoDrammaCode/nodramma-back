@@ -7,14 +7,14 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "src.main:app",
+                "main:app",
                 "--reload",
                 "--port",
                 "8000"
             ],
             "jinja": true,
             "justMyCode": false,
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}/src" 
         }
     ]
 }
